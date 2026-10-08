@@ -64,7 +64,7 @@ button.alt{background:#1e293b;color:#00f0ff;border:1px solid #00f0ff}
   <div id="err"></div>
   <div id="hostbox" style="display:none;margin-top:10px"><div style="font-size:12px;color:#9aa8bd">Share this code with friends:</div><input id="hcode" readonly style="width:340px"><button id="copy" class="alt">COPY</button><br><button id="enter">ENTER ARENA</button></div>
   <div id="info"><b>WASD</b> move · <b>SHIFT</b> sprint · <b>SPACE</b> jump · <b>1-5</b> weapons · <b>LMB</b> fire/slash · <b>RMB / Z</b> scope (all guns) · <b>TAB</b> scoreboard<br>
-  <b>O</b> rotate weapon 90° · <b>P</b> flip weapon over (calibration)</div>
+  <b>O</b> rotate weapon 90° · <b>L</b> flip weapon over · <b>P</b> teleport to top of map</div>
 </div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -441,11 +441,27 @@ addEventListener('keydown',e=>{
   if(/^Digit[1-5]$/.test(e.code))switchW(+e.code.slice(5));
   if(e.code==='KeyZ')setScope(!scoped);
   if(e.code==='KeyO'&&W[cur].inner)W[cur].inner.rotation.y+=Math.PI/2;
-  if(e.code==='KeyP'&&W[cur].inner)W[cur].inner.rotation.z+=Math.PI;
+  if(e.code==='KeyL'&&W[cur].inner)W[cur].inner.rotation.z+=Math.PI;
+  if(e.code==='KeyP'&&locked&&!dead)teleportTop();
   if(e.code==='Space')e.preventDefault();
   if(e.code==='Tab'){e.preventDefault();updateSB();$('sb').style.display='block'}
 });
 addEventListener('keyup',e=>{keys[e.code]=false;if(e.code==='Tab')$('sb').style.display='none'});
+
+// teleport to the highest point of the terrain (P)
+let topSpot=null;
+function teleportTop(){
+  if(!topSpot||topSpot.n!==terrain.length){
+    let best={y:-1e9,x:0,z:0};const B=HALF-4,N=40;
+    for(let i=0;i<=N;i++)for(let j=0;j<=N;j++){
+      const x=-B+2*B*i/N,z=-B+2*B*j/N;
+      if(hitsBlock(x,z,1))continue;
+      const y=groundAt(x,z,500);if(y>best.y)best={y,x,z};
+    }
+    topSpot={...best,n:terrain.length};
+  }
+  P.x=topSpot.x;P.z=topSpot.z;P.y=topSpot.y+.05;P.vy=0;vel.set(0,0,0);
+}
 
 // ---------- player movement (feet position P) ----------
 const P={x:0,y:12,z:0,vy:0,onGround:false};
