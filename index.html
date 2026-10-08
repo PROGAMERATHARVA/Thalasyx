@@ -31,6 +31,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#87ceeb;font-family:
 #splash{position:absolute;inset:0;background:rgba(10,15,24,.85);display:flex;align-items:center;justify-content:center;z-index:50}
 .box{text-align:center;background:rgba(13,19,30,.95);border-top:3px solid #00f0ff;border-bottom:3px solid #00f0ff;border-radius:8px;padding:30px 42px;max-width:620px}
 .box h1{letter-spacing:5px;margin-bottom:14px}
+input{user-select:text}
 input{background:#111827;border:1px solid #374151;border-radius:4px;color:#fff;font-weight:700;padding:9px 14px;margin:4px;width:230px;text-align:center;outline:none}
 button{background:#00f0ff;color:#060910;font-weight:800;letter-spacing:2px;padding:11px 24px;margin:4px;border:0;border-radius:4px;cursor:pointer}
 button.alt{background:#1e293b;color:#00f0ff;border:1px solid #00f0ff}
@@ -61,6 +62,7 @@ button.alt{background:#1e293b;color:#00f0ff;border:1px solid #00f0ff}
   <button id="solo">PLAY SOLO</button><button id="host" class="alt">HOST (P2P)</button><br>
   <input id="code" placeholder="Host code to join"><button id="join" class="alt">JOIN</button>
   <div id="err"></div>
+  <div id="hostbox" style="display:none;margin-top:10px"><div style="font-size:12px;color:#9aa8bd">Share this code with friends:</div><input id="hcode" readonly style="width:340px"><button id="copy" class="alt">COPY</button><br><button id="enter">ENTER ARENA</button></div>
   <div id="info"><b>WASD</b> move · <b>SHIFT</b> sprint · <b>SPACE</b> jump · <b>1-5</b> weapons · <b>LMB</b> fire/slash · <b>RMB / Z</b> scope (all guns) · <b>TAB</b> scoreboard<br>
   <b>O</b> rotate weapon 90° · <b>P</b> flip weapon over (calibration)</div>
 </div></div>
@@ -71,7 +73,7 @@ button.alt{background:#1e293b;color:#00f0ff;border:1px solid #00f0ff}
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script>
 (function(){
-const ARENA=120,HALF=ARENA/2,EYE=1.75,SPEED=14,SPRINT=1.6,FRICTION=10,SENS=0.0022,GRAV=28,JUMP=9;
+const ARENA=120,HALF=ARENA/2,EYE=1.75,SPEED=14,SPRINT=1.6,FRICTION=10,SENS=0.0022,GRAV=28,JUMP=13;
 const $=id=>document.getElementById(id);
 let selfId='solo',selfName='Soldier',health=100,kills=0,dead=false;
 const remotes=new Map();
@@ -160,8 +162,10 @@ function nameplate(name){
   s.scale.set(1.4,.35,1);s.position.y=2.2;return s;
 }
 function ensureRemote(id,name){
-  let e=remotes.get(id);if(e||!soldierTpl)return e;
-  const body=THREE.SkeletonUtils.clone(soldierTpl);
+  let e=remotes.get(id);if(e)return e;
+  let body;
+  if(soldierTpl)body=THREE.SkeletonUtils.clone(soldierTpl);
+  else{body=new THREE.Group();const c=new THREE.Mesh(new THREE.CapsuleGeometry?new THREE.CapsuleGeometry(.4,1,4,8):new THREE.CylinderGeometry(.4,.4,1.8,12),new THREE.MeshStandardMaterial({color:0xd04040}));c.position.y=.9;c.castShadow=true;body.add(c)}
   const root=new THREE.Group();root.add(body);root.add(nameplate(name||'Player'));scene.add(root);
   const mixer=new THREE.AnimationMixer(body),actions={};
   for(const k in clips){
@@ -298,6 +302,7 @@ function fire(){
 }
 
 // ---------- P2P networking (PeerJS, host relays) ----------
+const PEER_OPTS={debug:1,config:{iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'},{urls:'stun:global.stun.twilio.com:3478'}]}};
 let peer=null,isHost=false,hostConn=null;const conns=[];
 function setNet(t,c){$('nt').textContent=t;$('nt').style.color=c||'#00ff88'}
 function send(m){
@@ -311,8 +316,9 @@ function onData(m,from){
 }
 function startHost(){
   isHost=true;setNet('CREATING ROOM...','#ffb703');
-  peer=new Peer();
-  peer.on('open',id=>{selfId=id;setNet('HOSTING — share code: '+id)});
+  peer=new Peer(undefined,PEER_OPTS);
+  peer.on('open',id=>{selfId=id;setNet('HOSTING — code: '+id);$('hcode').value=id;$('hostbox').style.display='block';$('err').textContent=''});
+  peer.on('disconnected',()=>{try{peer.reconnect()}catch(e){}});
   peer.on('connection',c=>{
     c.on('open',()=>{conns.push(c)});
     c.on('data',d=>onData(d,c));
@@ -321,13 +327,14 @@ function startHost(){
       const id=c.peer;handle({t:'left',id});conns.forEach(o=>o.open&&o.send({t:'left',id,from:selfId}));
     });
   });
-  peer.on('error',e=>setNet('P2P ERROR: '+e.type,'#ff3366'));
+  peer.on('error',e=>{setNet('P2P ERROR: '+e.type,'#ff3366');$('err').textContent='P2P error: '+e.type});
 }
 function startJoin(code){
   isHost=false;setNet('CONNECTING...','#ffb703');
-  peer=new Peer();
+  peer=new Peer(undefined,PEER_OPTS);
   peer.on('open',id=>{
     selfId=id;hostConn=peer.connect(code,{reliable:true});
+    setTimeout(()=>{if(!hostConn.open)setNet('CAN\'T REACH HOST (check code / network)','#ff3366')},10000);
     hostConn.on('open',()=>setNet('CONNECTED to '+code));
     hostConn.on('data',d=>onData(d,null));
     hostConn.on('close',()=>{setNet('HOST DISCONNECTED','#ff3366');remotes.forEach((e,id)=>removeRemote(id))});
@@ -394,7 +401,7 @@ function updateSB(){
 let locked=false,pitch=0,yaw=0;
 function begin(mode){
   selfName=($('name').value.trim()||'Soldier').slice(0,14);
-  if(mode==='host')startHost();
+  if(mode==='host'){if(!peer)startHost();return}
   else if(mode==='join'){
     const c=$('code').value.trim();
     if(!c){$('err').textContent='Enter the host code first.';return}
@@ -403,6 +410,8 @@ function begin(mode){
   $('err').textContent='';
   document.body.requestPointerLock();
 }
+$('enter').onclick=()=>document.body.requestPointerLock();
+$('copy').onclick=()=>{$('hcode').select();try{navigator.clipboard.writeText($('hcode').value)}catch(e){document.execCommand('copy')}};
 $('solo').onclick=()=>begin('solo');$('host').onclick=()=>begin('host');$('join').onclick=()=>begin('join');
 document.addEventListener('pointerlockchange',()=>{
   locked=document.pointerLockElement===document.body;
