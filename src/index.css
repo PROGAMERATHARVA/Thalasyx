@@ -1,0 +1,117 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 250 47% 6%;
+    --background-2: 246 52% 9%;
+    --foreground: 0 0% 98%;
+    --card: 246 44% 11%;
+    --card-foreground: 0 0% 98%;
+    --popover: 246 44% 11%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 186 100% 50%;
+    --primary-foreground: 246 52% 9%;
+    --secondary: 246 40% 18%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 246 35% 20%;
+    --muted-foreground: 240 15% 70%;
+    --accent: 322 100% 58%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 246 35% 22%;
+    --input: 246 35% 22%;
+    --ring: 186 100% 50%;
+    --chart-1: 186 100% 50%;
+    --chart-2: 322 100% 58%;
+    --chart-3: 80 100% 55%;
+    --chart-4: 30 100% 60%;
+    --chart-5: 265 90% 65%;
+    --radius: 1rem;
+    --font-heading: "Fredoka", "Baloo 2", ui-sans-serif, system-ui, sans-serif;
+    --font-body: "Baloo 2", ui-sans-serif, system-ui, sans-serif;
+    --font-display: "Fredoka", "Baloo 2", ui-sans-serif, system-ui, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    --neon-cyan: 186 100% 50%;
+    --neon-pink: 322 100% 58%;
+    --neon-lime: 80 100% 55%;
+    --neon-orange: 30 100% 60%;
+    --neon-violet: 265 90% 65%;
+    --neon-gold: 45 100% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html, body, #root { height: 100%; }
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+    background-image:
+      radial-gradient(1200px 600px at 12% -8%, hsl(265 90% 30% / 0.45), transparent 60%),
+      radial-gradient(1000px 500px at 100% 0%, hsl(322 100% 45% / 0.30), transparent 55%),
+      radial-gradient(900px 600px at 50% 120%, hsl(186 100% 40% / 0.25), transparent 60%),
+      linear-gradient(180deg, hsl(250 47% 6%), hsl(246 52% 9%));
+    background-attachment: fixed;
+  }
+}
+
+@layer components {
+  .glow-cyan { box-shadow: 0 0 0 1px hsl(186 100% 50% / 0.5), 0 0 24px hsl(186 100% 50% / 0.35); }
+  .glow-pink { box-shadow: 0 0 0 1px hsl(322 100% 58% / 0.5), 0 0 24px hsl(322 100% 58% / 0.35); }
+  .glow-violet { box-shadow: 0 0 0 1px hsl(265 90% 65% / 0.5), 0 0 24px hsl(265 90% 65% / 0.35); }
+  .glow-gold { box-shadow: 0 0 0 1px hsl(45 100% 60% / 0.5), 0 0 24px hsl(45 100% 60% / 0.35); }
+  .glow-lime { box-shadow: 0 0 0 1px hsl(80 100% 55% / 0.5), 0 0 24px hsl(80 100% 55% / 0.35); }
+  .text-glow-cyan { text-shadow: 0 0 18px hsl(186 100% 50% / 0.55); }
+  .text-glow-pink { text-shadow: 0 0 18px hsl(322 100% 58% / 0.55); }
+  .panel {
+    @apply rounded-3xl border border-white/10 bg-card/70 backdrop-blur-xl;
+  }
+  .btn-glow {
+    @apply relative inline-flex items-center justify-center gap-2 rounded-2xl font-heading font-semibold transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:pointer-events-none;
+  }
+  .gradient-text {
+    background: linear-gradient(135deg, hsl(186 100% 60%), hsl(322 100% 65%), hsl(45 100% 65%));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+@layer utilities {
+  .animate-float { animation: float 6s ease-in-out infinite; }
+  .animate-float-slow { animation: float 9s ease-in-out infinite; }
+  .animate-pop { animation: pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+  .animate-shimmer { background-size: 200% 100%; animation: shimmer 2.5s linear infinite; }
+  .animate-spin-slow { animation: spin 14s linear infinite; }
+  .animate-pulse-glow { animation: pulseGlow 2s ease-in-out infinite; }
+  .animate-rise { animation: rise 0.5s ease-out both; }
+  .bg-grid {
+    background-image: linear-gradient(hsl(246 40% 20% / 0.4) 1px, transparent 1px), linear-gradient(90deg, hsl(246 40% 20% / 0.4) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+@keyframes pop {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 1px hsl(186 100% 50% / 0.4), 0 0 18px hsl(186 100% 50% / 0.25); }
+  50% { box-shadow: 0 0 0 1px hsl(186 100% 50% / 0.7), 0 0 34px hsl(186 100% 50% / 0.5); }
+}
+@keyframes rise {
+  0% { transform: translateY(16px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}

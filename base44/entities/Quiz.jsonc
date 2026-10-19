@@ -1,0 +1,76 @@
+{
+  "name": "Quiz",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "cover_emoji": {
+      "type": "string"
+    },
+    "creator_key": {
+      "type": "string"
+    },
+    "published": {
+      "type": "boolean",
+      "default": false
+    },
+    "settings": {
+      "type": "object",
+      "properties": {
+        "sound": {
+          "type": "boolean"
+        },
+        "reveal_answers": {
+          "type": "boolean"
+        },
+        "progression": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "manual"
+          ]
+        },
+        "player_limit": {
+          "type": "number"
+        },
+        "random_questions": {
+          "type": "boolean"
+        },
+        "random_answers": {
+          "type": "boolean"
+        },
+        "unique_avatars": {
+          "type": "boolean"
+        }
+      }
+    },
+    "question_count": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "title"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

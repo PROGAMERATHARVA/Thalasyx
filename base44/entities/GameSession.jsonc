@@ -1,0 +1,70 @@
+{
+  "name": "GameSession",
+  "type": "object",
+  "properties": {
+    "game_code": {
+      "type": "string"
+    },
+    "quiz_id": {
+      "type": "string"
+    },
+    "quiz_title": {
+      "type": "string"
+    },
+    "host_id": {
+      "type": "string"
+    },
+    "host_key": {
+      "type": "string"
+    },
+    "host_name": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "lobby",
+        "playing",
+        "revealed",
+        "ended"
+      ]
+    },
+    "current_question_index": {
+      "type": "number"
+    },
+    "current_question_id": {
+      "type": "string"
+    },
+    "question_started_at": {
+      "type": "string"
+    },
+    "reveal_shown": {
+      "type": "boolean"
+    },
+    "total_questions": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "game_code",
+    "quiz_id"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

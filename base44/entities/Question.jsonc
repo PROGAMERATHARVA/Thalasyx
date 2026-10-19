@@ -1,0 +1,62 @@
+{
+  "name": "Question",
+  "type": "object",
+  "properties": {
+    "quiz_id": {
+      "type": "string"
+    },
+    "question_index": {
+      "type": "number"
+    },
+    "text": {
+      "type": "string"
+    },
+    "question_type": {
+      "type": "string",
+      "enum": [
+        "multiple_choice",
+        "true_false"
+      ]
+    },
+    "options": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "correct_option": {
+      "type": "number"
+    },
+    "timer_seconds": {
+      "type": "number"
+    },
+    "points": {
+      "type": "number"
+    },
+    "emoji": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "quiz_id",
+    "text"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

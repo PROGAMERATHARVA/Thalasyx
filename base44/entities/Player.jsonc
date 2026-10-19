@@ -1,0 +1,59 @@
+{
+  "name": "Player",
+  "type": "object",
+  "properties": {
+    "game_session_id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "avatar_id": {
+      "type": "string"
+    },
+    "avatar_name": {
+      "type": "string"
+    },
+    "avatar_collection": {
+      "type": "string"
+    },
+    "wallet_key": {
+      "type": "string"
+    },
+    "score": {
+      "type": "number"
+    },
+    "player_key": {
+      "type": "string"
+    },
+    "answers_count": {
+      "type": "number"
+    },
+    "correct_count": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "game_session_id",
+    "name",
+    "player_key"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

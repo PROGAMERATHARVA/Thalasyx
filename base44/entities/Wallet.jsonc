@@ -1,0 +1,49 @@
+{
+  "name": "Wallet",
+  "type": "object",
+  "properties": {
+    "owner_key": {
+      "type": "string"
+    },
+    "coins": {
+      "type": "number"
+    },
+    "owned_packs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "owned_avatars": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "owner_key"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

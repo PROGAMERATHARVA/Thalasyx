@@ -1,0 +1,47 @@
+{
+  "name": "AvatarReservation",
+  "type": "object",
+  "properties": {
+    "game_session_id": {
+      "type": "string"
+    },
+    "avatar_id": {
+      "type": "string"
+    },
+    "avatar_name": {
+      "type": "string"
+    },
+    "player_id": {
+      "type": "string"
+    },
+    "player_key": {
+      "type": "string"
+    },
+    "reserved_at": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "game_session_id",
+    "avatar_id",
+    "player_id"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

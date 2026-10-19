@@ -1,0 +1,56 @@
+{
+  "name": "Answer",
+  "type": "object",
+  "properties": {
+    "game_session_id": {
+      "type": "string"
+    },
+    "player_id": {
+      "type": "string"
+    },
+    "player_key": {
+      "type": "string"
+    },
+    "question_id": {
+      "type": "string"
+    },
+    "question_index": {
+      "type": "number"
+    },
+    "selected_option": {
+      "type": "number"
+    },
+    "is_correct": {
+      "type": "boolean"
+    },
+    "points_awarded": {
+      "type": "number"
+    },
+    "submitted_at": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "game_session_id",
+    "player_id",
+    "question_id"
+  ],
+  "rls": {
+    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
